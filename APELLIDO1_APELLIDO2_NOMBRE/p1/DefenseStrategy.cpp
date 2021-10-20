@@ -29,16 +29,17 @@ float cellValue(int row, int col, bool** freeCells, int nCellsWidth, int nCellsH
     //Vamos a revisar las celdas de alrededor para ver que hay y si es una buena celda
     //Los criterios a seguir seran:
     //  -Cuanto mas cerca este de una defensa mejor
-    //  -Cuanto mas lejos este de un obstaculo mejor
+    //  -Cuanto mas lejos este de un obstacúlo mejor
     //Antes que nada debemos determinar la celda, eso lo haremos con la funcion que se nos proporciona en preguntas frecuentes.
-    Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
-    //Vamos a usar un iterador de defensas para recorrerlas todas y ver donde estan
-    List<Defense*>::iterator currentDefense = defenses.begin();
-    while(currentDefense != defenses.end()) {
-        //La puntuacion sera la diferencia de distancia entre la celda y la defensa, cuanto mas cerca este MEJOR, por eso lo hacemos al reves, es decir INVERTIMOS LA DISTANCIA QUE NOS DAN
-        value +=(*currentDefense)->position.subtract(cellInPosition).length();
-        ++currentDefense;
-    }
+    
+    
+
+    //COMPROBACION DE SI ESTA POR EL CENTRO DEL MAPA, HACER OTRO DIA
+
+
+
+
+
     List<Object*>::iterator currentObstacle = obstacles.begin();
     while (currentObstacle != obstacles.end()){
         //Como es mejor cuanto mas lejos este de un obstaculo mejor, esta distancia se sumara al value
