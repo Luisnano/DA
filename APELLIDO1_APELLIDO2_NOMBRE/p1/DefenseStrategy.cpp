@@ -43,10 +43,19 @@ float cellValue(int row, int col, bool** freeCells, int nCellsWidth, int nCellsH
     }
 
     //El segundo factor de valor
-    //NOSE TIO ESTOY TROLLList <Map*>::iterator currentPosition = map.//
+    //Usamos el cellCenterTo position para buscar la celda mas cercana al centro,
+    //  con esto ya podemos comparar la posicion de la celda con la del centro
+    //  Cuanto mas cerca este, mejor. Entonces invertimos la distancia y ese es el puntuaje.
+    int mapCenterAuxW = mapWidth / 2;
+    int mapCenterAuxH = mapHeight / 2;
+    Vector3 mapCenter = cellCenterToPosition (mapCenterAuxW, mapCenterAuxH, mapWidth, mapHeight);
+    value += 1/(mapCenter.subtract(cellInPosition).length());
+    //Hasta aqui seria la implemetacion del primer ejercicio, pero como no hay que implementarla
+    //  usare esta para añadirle las variables que hace que esta funcion sea para darle valores 
+    //  a las celdas de defensa.
 
-    
-    
+
+
 	return value; // implemente aqui la funci�n que asigna valores a las celdas
 }
 
