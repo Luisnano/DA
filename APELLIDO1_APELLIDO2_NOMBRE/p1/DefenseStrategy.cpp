@@ -97,7 +97,7 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
 
 #endif
 }
-
+//--------------------------------PROBLEMA 2-----------------------------------------------------------------------
 // -------------------------------FUNCION DE FACTIBILIDAD----------------------------------------------------------
 //Para la funcion de factibilidad hay que tener en cuenta dos factores que haran si es haral una celda o no:
 //  -Que la celda este dentro del mapa.
