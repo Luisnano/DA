@@ -53,9 +53,12 @@ float cellValue(int row, int col, bool** freeCells, int nCellsWidth, int nCellsH
     //Hasta aqui seria la implemetacion del primer ejercicio, pero como no hay que implementarla
     //  usare esta para añadirle las variables que hace que esta funcion sea para darle valores 
     //  a las celdas de defensa.
-
-
-
+    //El primer criterio para la colocacion de una defensa sera que haya mas defensas cerca
+    List<Defense*> :: iterator currentDefense = defenses.begin();
+    while (currentDefense != defenses.end()){
+        value += 1/((*currentDefense)->position.subtract(cellInPosition).length());
+        ++currentDefense;
+    }
 	return value; // implemente aqui la funci�n que asigna valores a las celdas
 }
 
@@ -93,4 +96,29 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
 	cellValues = NULL;
 
 #endif
+}
+
+// -------------------------------FUNCION DE FACTIBILIDAD----------------------------------------------------------
+//Para la funcion de factibilidad hay que tener en cuenta dos factores que haran si es haral una celda o no:
+//  -Que la celda este dentro del mapa.
+//  -Que la celda no este ocupada por un obstaculo o una defensa, es decir, que este libre.
+
+bool factibilidad(int row, int col, const Defense& defensa, List<Object*> obstacles, List<Defense*> defenses, 
+                  bool **freeCells,float mapHeight, float mapWidth,int nCellsWidth,
+                  int nCellsHeight)
+{
+    //COMENZAMOS CON LA FUNCION DE FACTIBILIDAD
+    //De variables necesitamos lo de siempre, las celdas en forma normal y la celda actual
+
+    float cellWidth = mapWidth / nCellsWidth;
+    float cellHeight = mapHeight / nCellsHeight;
+    Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
+
+    //Primero: ¿Está dentro de los limites del mapa?
+    if (cellInPosition.x > mapWidth || cellInPosition.y > mapHeight){
+        return false;
+    }
+    if ()
+    
+
 }
