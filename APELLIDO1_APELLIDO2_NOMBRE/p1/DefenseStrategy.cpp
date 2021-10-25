@@ -114,11 +114,30 @@ bool factibilidad(int row, int col, const Defense& defensa, List<Object*> obstac
     float cellHeight = mapHeight / nCellsHeight;
     Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
 
+    bool esValido = true;
+
     //Primero: ¿Está dentro de los limites del mapa?
     if (cellInPosition.x > mapWidth || cellInPosition.y > mapHeight){
-        return false;
-    }
-    if ()
-    
+        esValido = false;
+    }//if
 
-}
+    //2: Esta ocupada la celda por:
+    //2.1   -Una defensa?
+    List<Defense*> ::iterator currentDefense = defenses.begin();
+    while (currentDefense != defenses.end())
+    {
+        if((*currentDefense)->position.x == cellInPosition.x && (*currentDefense)->position.y == cellInPosition.y && (*currentDefense)->position.z == cellInPosition.z){
+            esValido = false;
+        }//if
+    }//while
+
+    //2.2   -Un obstaculo?
+    List<Object*> ::iterator currentObstacle = obstacles.begin();
+    while (currentObstacle != obstacles.end())
+    {
+        if((*currentObstacle)->position.x == cellInPosition.x && (*currentObstacle)->position.y == cellInPosition.y && (*currentObstacle)->position.z == cellInPosition.z){
+            esValido =  false;
+        }//if
+    }//while
+    
+}//fin_funcion
