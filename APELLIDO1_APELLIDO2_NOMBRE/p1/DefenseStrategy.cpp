@@ -97,7 +97,7 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     //2: Esta ocupada la celda por:
     //2.1   -Una defensa?
     List<Defense*> ::iterator currentDefense = defenses.begin();
-    while (currentDefense != defenses.end())
+    while (currentDefense != defenses.end() && esValido != false)
     {
         std::cout<<"STOP while defenses"<<std::endl;
         if((*currentDefense)->position.x == cellInPosition.x && (*currentDefense)->position.y == cellInPosition.y && (*currentDefense)->position.z == cellInPosition.z){
@@ -108,12 +108,15 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
 
     //2.2   -Un obstaculo? AQUIIIIIII
     List<Object*> ::iterator currentObstacle = obstacles.begin();
-    while (currentObstacle != obstacles.end())
+    while (currentObstacle != obstacles.end() && esValido != false)
     {
         std::cout<<"STOP while obstacles"<<std::endl;
         if((*currentObstacle)->position.x == cellInPosition.x && (*currentObstacle)->position.y == cellInPosition.y && (*currentObstacle)->position.z == cellInPosition.z){
             esValido =  false;
-        }//if 
+        }//if
+        if ((defensa->radio - (*currentObstacle)->radio)<=0){
+            esValido = false;
+        } 
         ++currentObstacle;
     }//while
     return esValido;
