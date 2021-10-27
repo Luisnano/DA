@@ -62,20 +62,79 @@ float cellValue(int row, int col, bool** freeCells, int nCellsWidth, int nCellsH
 	return value; // implemente aqui la funci�n que asigna valores a las celdas
 }
 
+bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, List<Defense*> defenses, 
+                  bool **freeCells,float mapHeight, float mapWidth,int nCellsWidth,
+                  int nCellsHeight) {
+    //COMENZAMOS CON LA FUNCION DE FACTIBILIDAD
+    //De variables necesitamos lo de siempre, las celdas en forma normal y la celda actual
+
+    float cellWidth = mapWidth / nCellsWidth;
+    float cellHeight = mapHeight / nCellsHeight;
+    Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
+
+    bool esValido = true;
+
+    //Primero: ¿Está dentro de los limites del mapa?
+    if (cellInPosition.x > mapWidth || cellInPosition.y > mapHeight){
+        esValido = false;
+    }//if
+
+    //El radio de el objeto no se encuentra fuera del mapa
+    if (cellInPosition.x + defensa->radio >mapWidth || cellInPosition.y + defensa->radio > mapHeight){
+        esValido = false;
+    } 
+
+    //Ya de paso vamos a mirar que no estamos intentando colocarlo en una posicion negativa
+    if (cellInPosition.x + defensa->radio < 0 || cellInPosition.y + defensa->radio < 0){
+        esValido = false;
+    } 
+
+
+    //2: Esta ocupada la celda por:
+    //2.1   -Una defensa?
+    List<Defense*> ::iterator currentDefense = defenses.begin();
+    while (currentDefense != defenses.end())
+    {
+        if((*currentDefense)->position.x == cellInPosition.x || (*currentDefense)->position.y == cellInPosition.y || (*currentDefense)->position.z == cellInPosition.z){
+            esValido = false;
+        }//if
+    }//while
+
+    //2.2   -Un obstaculo? AQUIIIIIII
+    List<Object*> ::iterator currentObstacle = obstacles.begin();
+    while (currentObstacle != obstacles.end())
+    {
+        if((*currentObstacle)->position.x == cellInPosition.x || (*currentObstacle)->position.y == cellInPosition.y || (*currentObstacle)->position.z == cellInPosition.z){
+            esValido =  false;
+        }//if
+        if(cellInPosition.x + defensa->radio > (*currentObstacle)->radio || cellInPosition.y + defensa->radio > (*currentObstacle)->radio){
+            esValido = false;
+        }//if 
+    }//while
+    return esValido;
+}//fin_funcion
+
 void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCellsHeight, float mapWidth, float mapHeight
               , std::list<Object*> obstacles, std::list<Defense*> defenses) {
 
     float cellWidth = mapWidth / nCellsWidth;
     float cellHeight = mapHeight / nCellsHeight; 
+    int row = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
+    int col = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
 
     int maxAttemps = 1000;
     List<Defense*>::iterator currentDefense = defenses.begin();
     while(currentDefense != defenses.end() && maxAttemps > 0) {
+    
+        if (factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight))
+        {
 
-        (*currentDefense)->position.x = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
-        (*currentDefense)->position.y = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
-        (*currentDefense)->position.z = 0; 
-        ++currentDefense;
+        
+            (*currentDefense)->position.x = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
+            (*currentDefense)->position.y = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
+            (*currentDefense)->position.z = 0; 
+            ++currentDefense;
+        }//if
     }
 
 #ifdef PRINT_DEFENSE_STRATEGY
@@ -103,54 +162,4 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
 //  -Que la celda este dentro del mapa.
 //  -Que la celda no este ocupada por un obstaculo o una defensa, es decir, que este libre.
 
-bool factibilidad(int row, int col, const Defense& defensa, List<Object*> obstacles, List<Defense*> defenses, 
-                  bool **freeCells,float mapHeight, float mapWidth,int nCellsWidth,
-                  int nCellsHeight) {
-    //COMENZAMOS CON LA FUNCION DE FACTIBILIDAD
-    //De variables necesitamos lo de siempre, las celdas en forma normal y la celda actual
 
-    float cellWidth = mapWidth / nCellsWidth;
-    float cellHeight = mapHeight / nCellsHeight;
-    Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
-
-    bool esValido = true;
-
-    //Primero: ¿Está dentro de los limites del mapa?
-    if (cellInPosition.x > mapWidth || cellInPosition.y > mapHeight){
-        esValido = false;
-    }//if
-
-    //El radio de el objeto no se encuentra fuera del mapa
-    if (cellInPosition.x + defensa.radio >mapWidth || cellInPosition.y + defensa.radio > mapHeight){
-        esValido = false;
-    } 
-
-    //Ya de paso vamos a mirar que no estamos intentando colocarlo en una posicion negativa
-    if (cellInPosition.x + defensa.radio < 0 || cellInPosition.y + defensa.radio < 0){
-        esValido = false;
-    } 
-
-
-    //2: Esta ocupada la celda por:
-    //2.1   -Una defensa?
-    List<Defense*> ::iterator currentDefense = defenses.begin();
-    while (currentDefense != defenses.end())
-    {
-        if((*currentDefense)->position.x == cellInPosition.x || (*currentDefense)->position.y == cellInPosition.y || (*currentDefense)->position.z == cellInPosition.z){
-            esValido = false;
-        }//if
-    }//while
-
-    //2.2   -Un obstaculo? AQUIIIIIII
-    List<Object*> ::iterator currentObstacle = obstacles.begin();
-    while (currentObstacle != obstacles.end())
-    {
-        if((*currentObstacle)->position.x == cellInPosition.x || (*currentObstacle)->position.y == cellInPosition.y || (*currentObstacle)->position.z == cellInPosition.z){
-            esValido =  false;
-        }//if
-        if(cellInPosition.x + defensa.radio > (*currentObstacle)->radio || cellInPosition.y + defensa.radio > (*currentObstacle)->radio){
-            esValido = false;
-        }//if 
-    }//while
-    return esValido;
-}//fin_funcion
