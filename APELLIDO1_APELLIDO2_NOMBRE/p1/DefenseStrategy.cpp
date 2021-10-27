@@ -121,6 +121,17 @@ bool factibilidad(int row, int col, const Defense& defensa, List<Object*> obstac
         esValido = false;
     }//if
 
+    //El radio de el objeto no se encuentra fuera del mapa
+    if (cellInPosition.x + defensa.radio >mapWidth || cellInPosition.y + defensa.radio > mapHeight){
+        esValido = false;
+    } 
+
+    //Ya de paso vamos a mirar que no estamos intentando colocarlo en una posicion negativa
+    if (cellInPosition.x + defensa.radio < 0 || cellInPosition.y + defensa.radio < 0){
+        esValido = false;
+    } 
+
+
     //2: Esta ocupada la celda por:
     //2.1   -Una defensa?
     List<Defense*> ::iterator currentDefense = defenses.begin();
