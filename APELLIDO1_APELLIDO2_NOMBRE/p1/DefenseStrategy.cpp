@@ -105,8 +105,7 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
 
 bool factibilidad(int row, int col, const Defense& defensa, List<Object*> obstacles, List<Defense*> defenses, 
                   bool **freeCells,float mapHeight, float mapWidth,int nCellsWidth,
-                  int nCellsHeight)
-{
+                  int nCellsHeight) {
     //COMENZAMOS CON LA FUNCION DE FACTIBILIDAD
     //De variables necesitamos lo de siempre, las celdas en forma normal y la celda actual
 
@@ -137,18 +136,21 @@ bool factibilidad(int row, int col, const Defense& defensa, List<Object*> obstac
     List<Defense*> ::iterator currentDefense = defenses.begin();
     while (currentDefense != defenses.end())
     {
-        if((*currentDefense)->position.x == cellInPosition.x && (*currentDefense)->position.y == cellInPosition.y && (*currentDefense)->position.z == cellInPosition.z){
+        if((*currentDefense)->position.x == cellInPosition.x || (*currentDefense)->position.y == cellInPosition.y || (*currentDefense)->position.z == cellInPosition.z){
             esValido = false;
         }//if
     }//while
 
-    //2.2   -Un obstaculo?
+    //2.2   -Un obstaculo? AQUIIIIIII
     List<Object*> ::iterator currentObstacle = obstacles.begin();
     while (currentObstacle != obstacles.end())
     {
-        if((*currentObstacle)->position.x == cellInPosition.x && (*currentObstacle)->position.y == cellInPosition.y && (*currentObstacle)->position.z == cellInPosition.z){
+        if((*currentObstacle)->position.x == cellInPosition.x || (*currentObstacle)->position.y == cellInPosition.y || (*currentObstacle)->position.z == cellInPosition.z){
             esValido =  false;
         }//if
+        if(cellInPosition.x + defensa.radio > (*currentObstacle)->radio || cellInPosition.y + defensa.radio > (*currentObstacle)->radio){
+            esValido = false;
+        }//if 
     }//while
-    
+    return esValido;
 }//fin_funcion
