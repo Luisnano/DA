@@ -71,21 +71,25 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     float cellWidth = mapWidth / nCellsWidth;
     float cellHeight = mapHeight / nCellsHeight;
     Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
+    std::cout<<"STOP FUERA DE CONDICIONALES"<<std::endl;
 
     bool esValido = true;
 
     //Primero: ¿Está dentro de los limites del mapa?
     if (cellInPosition.x > mapWidth || cellInPosition.y > mapHeight){
+        std::cout<<"STOP 1"<<std::endl;
         esValido = false;
     }//if
 
     //El radio de el objeto no se encuentra fuera del mapa
-    if (cellInPosition.x + defensa->radio >mapWidth || cellInPosition.y + defensa->radio > mapHeight){
+    if (cellInPosition.x + defensa->radio >mapWidth && cellInPosition.y + defensa->radio > mapHeight){
+        std::cout<<"STOP 2"<<std::endl;
         esValido = false;
     } 
 
     //Ya de paso vamos a mirar que no estamos intentando colocarlo en una posicion negativa
-    if (cellInPosition.x + defensa->radio < 0 || cellInPosition.y + defensa->radio < 0){
+    if (cellInPosition.x + defensa->radio < 0 && cellInPosition.y + defensa->radio < 0){
+        std::cout<<"STOP 3"<<std::endl;
         esValido = false;
     } 
 
@@ -95,21 +99,22 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     List<Defense*> ::iterator currentDefense = defenses.begin();
     while (currentDefense != defenses.end())
     {
-        if((*currentDefense)->position.x == cellInPosition.x || (*currentDefense)->position.y == cellInPosition.y || (*currentDefense)->position.z == cellInPosition.z){
+        std::cout<<"STOP while defenses"<<std::endl;
+        if((*currentDefense)->position.x == cellInPosition.x && (*currentDefense)->position.y == cellInPosition.y && (*currentDefense)->position.z == cellInPosition.z){
             esValido = false;
         }//if
+        ++currentDefense;
     }//while
 
     //2.2   -Un obstaculo? AQUIIIIIII
     List<Object*> ::iterator currentObstacle = obstacles.begin();
     while (currentObstacle != obstacles.end())
     {
-        if((*currentObstacle)->position.x == cellInPosition.x || (*currentObstacle)->position.y == cellInPosition.y || (*currentObstacle)->position.z == cellInPosition.z){
+        std::cout<<"STOP while obstacles"<<std::endl;
+        if((*currentObstacle)->position.x == cellInPosition.x && (*currentObstacle)->position.y == cellInPosition.y && (*currentObstacle)->position.z == cellInPosition.z){
             esValido =  false;
-        }//if
-        if(cellInPosition.x + defensa->radio > (*currentObstacle)->radio || cellInPosition.y + defensa->radio > (*currentObstacle)->radio){
-            esValido = false;
         }//if 
+        ++currentObstacle;
     }//while
     return esValido;
 }//fin_funcion
@@ -119,17 +124,22 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
 
     float cellWidth = mapWidth / nCellsWidth;
     float cellHeight = mapHeight / nCellsHeight; 
-    int row = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
-    int col = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
 
     int maxAttemps = 1000;
     List<Defense*>::iterator currentDefense = defenses.begin();
     while(currentDefense != defenses.end() && maxAttemps > 0) {
+
+        int row = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
+        int col = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
+
+        std::cout<<"hola caracola"<<std::endl;
+
+        bool diosito_de_mis_amores = factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight);
     
-        if (factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight))
+        if (diosito_de_mis_amores == true)
         {
 
-        
+            
             (*currentDefense)->position.x = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
             (*currentDefense)->position.y = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
             (*currentDefense)->position.z = 0; 
