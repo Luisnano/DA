@@ -1,0 +1,24 @@
+    Es muy importante el matíz de que la celda esta destinada a ser para el centro de recursos, esta será nuestra primera forma de valorar
+una celda. El centro de recursos es la primera "defensa" que se instalara en el mapa. Esto viene en la documentacion de la Práctica 0 y sera nuestra valoracion principal a la hora de añadir puntuación
+a las celdas. 
+
+    Ahora bien, ¿como se implementaría?. Nos surge una duda, el mapa. El mapa es una matriz, y no sabemos la posición en esta matriz de la celda
+a tratar. Vamos a usar una función de la que se habla en el apartado de "preguntas frecuentes" en el campus. Con esta función conseguiremos
+obtener una vision mas clara de la celda con la que estamos trabajando.
+
+    ¿Que factores vamos a tener en cuenta a la hora de decidir si una celda es mas valida para la colocacion del centro de recoleccion 
+de recursos que otra? Pues muy claramente, los obstaculos que tendra al rededor. Estos seran la principal determinacion de la funcion
+a la hora de asignar un valor a la celda. El valor sera la distancia que hay desde la celda a la posicion del obstaculo. Otra consideracion
+a tener en cuenta (aunque no tan importante) a la hora de valorar la celda, sera la posicion general en el mapa. Por ejemplo, si una celda
+esta mas centrada en el mapa, sera mas valida. Esto lo implementamos de forma similar, ya que tenemos una variable en la clase la cual
+determina la distancia de los bordes. 
+
+    Con estos dos factores valorados, se colocaria el centro de obtencion de recursos en la zona mas optima, es decir, la que mas puntos
+tenga a la hora de elegirla.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{./defenseValueCellsHead} % no es necesario especificar la extensión del archivo que contiene la imagen
+\caption{Estrategia devoradora para la mina}
+\label{fig:defenseValueCellsHead}
+\end{figure}

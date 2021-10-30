@@ -1,0 +1,12 @@
+    La funcion de factibilidad es sencilla, simplemente tenemos que comprobar dos cosas para saber si una celda es factible para ser usada por el usuario:
+
+    -Que no este fuera de los limites establecidos del mapa.
+    -Que no sea una celda ya ocupada por un obstaculo o por una defensa ya puesta.
+
+    Pues bien, veamos que hacer para que se cumplan estas dos condiciones. Primero usaremos la misma funcion que en el apartado anterior para crear una variable Vector3
+la cual nos indique la celda en la cual nos encontramos, y con eso nos aseguraremos de que esta dentro del mapa comprobando si la posicion es mayor que el "mapWidth" y
+el "mapHeigth". Si alguna de estas se cumple, ponemos false al booleano "esValido"(el cual usaremos para devolver false si no es factible y true si lo es).
+
+    Segunda parte, que no este ocupado. Esto es un poco mas intrinseco. En ambos (Defensas y Obstaculos) crearemos un iterador para que recorra todos los elementos de la lista
+y asi comprobar mediante bucles "if" si la posicion de algunas defensas u obstaculos coincide con la posicion de la celda en la cual nos encontramos actualmente.
+    Una vez comprobado todo devolveremos el booleano que se ha creado al principio ya sea con true si es factible o con false si no lo es, dependiendo si ha encontrado algun fallo.

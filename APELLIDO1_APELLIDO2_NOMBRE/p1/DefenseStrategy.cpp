@@ -70,25 +70,25 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
 
     float cellWidth = mapWidth / nCellsWidth;
     float cellHeight = mapHeight / nCellsHeight;
-    Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
+    //Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
     std::cout<<"STOP FUERA DE CONDICIONALES"<<std::endl;
 
     bool esValido = true;
 
     //Primero: ¿Está dentro de los limites del mapa?
-    if (cellInPosition.x > mapWidth || cellInPosition.y > mapHeight){
+    if (/*cellInPosition.x + */defensa->radio > mapWidth || /*cellInPosition.y + */defensa->radio > mapHeight){
         std::cout<<"STOP 1"<<std::endl;
         esValido = false;
     }//if
 
     //El radio de el objeto no se encuentra fuera del mapa
-    if (cellInPosition.x + defensa->radio >mapWidth && cellInPosition.y + defensa->radio > mapHeight){
+    if (/*cellInPosition.x + */defensa->radio >mapWidth || /*cellInPosition.y */+ defensa->radio > mapHeight){
         std::cout<<"STOP 2"<<std::endl;
         esValido = false;
     } 
 
     //Ya de paso vamos a mirar que no estamos intentando colocarlo en una posicion negativa
-    if (cellInPosition.x + defensa->radio < 0 && cellInPosition.y + defensa->radio < 0){
+    if (/*cellInPosition.x + */defensa->radio < 0 && /*cellInPosition.y + */defensa->radio < 0){
         std::cout<<"STOP 3"<<std::endl;
         esValido = false;
     } 
@@ -100,7 +100,8 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     while (currentDefense != defenses.end() && esValido != false)
     {
         std::cout<<"STOP while defenses"<<std::endl;
-        if((*currentDefense)->position.x == cellInPosition.x && (*currentDefense)->position.y == cellInPosition.y && (*currentDefense)->position.z == cellInPosition.z){
+        if((*currentDefense)->position.x == defensa->position.x && (*currentDefense)->position.y == defensa->position.y ){
+            std::cout<<"DEFENSA FALSE"<<std::endl;
             esValido = false;
         }//if
         ++currentDefense;
@@ -111,7 +112,7 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     while (currentObstacle != obstacles.end() && esValido != false)
     {
         std::cout<<"STOP while obstacles"<<std::endl;
-        if((*currentObstacle)->position.x == cellInPosition.x && (*currentObstacle)->position.y == cellInPosition.y && (*currentObstacle)->position.z == cellInPosition.z){
+        if((*currentObstacle)->position.x == defensa->position.x && (*currentObstacle)->position.y == defensa->position.y){
             esValido =  false;
         }//if
         if ((defensa->radio - (*currentObstacle)->radio)<=0){
@@ -119,6 +120,7 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
         } 
         ++currentObstacle;
     }//while
+    
     return esValido;
 }//fin_funcion
 
@@ -137,17 +139,20 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
 
         std::cout<<"hola caracola"<<std::endl;
 
-        bool diosito_de_mis_amores = factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight);
-    
-        if (diosito_de_mis_amores == true)
-        {
-
+        bool es_factible = factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight);
+        std::cout<<"termina factibilidad"<<std::endl;
+        if (es_factible == true){
+            std::cout<<"HA DADO TRUE"<<std::endl;
             
             (*currentDefense)->position.x = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
             (*currentDefense)->position.y = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
             (*currentDefense)->position.z = 0; 
             ++currentDefense;
         }//if
+        if (es_factible == false){
+            std::cout<<"HA DADO FALSE"<<std::endl;
+            ++currentDefense;
+        }
     }
 
 #ifdef PRINT_DEFENSE_STRATEGY
