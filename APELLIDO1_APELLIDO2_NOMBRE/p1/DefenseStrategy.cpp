@@ -62,9 +62,29 @@ float cellValue(int row, int col, bool** freeCells, int nCellsWidth, int nCellsH
 	return value; // implemente aqui la funci�n que asigna valores a las celdas
 }
 
-bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, List<Defense*> defenses, 
+bool factibilidad_centroExtraccion(int row, int col, Defense* defensa, List<Object*> obstacles, List<Defense*> defenses, 
                   bool **freeCells,float mapHeight, float mapWidth,int nCellsWidth,
                   int nCellsHeight) {
+
+    float cellWidth = mapWidth / nCellsWidth;
+    float cellHeight = mapHeight / nCellsHeight;
+
+    bool is_factc = true;
+
+    Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
+
+    List<Object*>::iterator currentObstacle = obstacles.begin();
+    while (currentObstacle != obstacles.end()){
+        if((*currentObstacle)->position.subtract(cellInPosition).length()<0){
+            is_factc = false;
+        }
+        ++currentObstacle;
+    }
+    return is_factc;
+}
+
+bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, List<Defense*> defenses, 
+                  bool **freeCells,float mapHeight, float mapWidth,int nCellsWidth, int nCellsHeight, int attempts) {
     //COMENZAMOS CON LA FUNCION DE FACTIBILIDAD
     //De variables necesitamos lo de siempre, las celdas en forma normal y la celda actual
 
@@ -74,6 +94,10 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     std::cout<<"STOP FUERA DE CONDICIONALES"<<std::endl;
 
     bool esValido = true;
+    //Veamos primero si es el centro de extraccion de minerales
+    if (attempts==1000){
+        esValido = factibilidad_centroExtraccion(row, col,defensa, obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight);
+    }
 
     //Primero: ¿Está dentro de los limites del mapa?
     if (/*cellInPosition.x + */defensa->radio > mapWidth || /*cellInPosition.y + */defensa->radio > mapHeight){
@@ -139,7 +163,7 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
 
         std::cout<<"hola caracola"<<std::endl;
 
-        bool es_factible = factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight);
+        bool es_factible = factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight, maxAttemps);
         std::cout<<"termina factibilidad"<<std::endl;
         if (es_factible == true){
             std::cout<<"HA DADO TRUE"<<std::endl;
@@ -153,6 +177,7 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
             std::cout<<"HA DADO FALSE"<<std::endl;
             ++currentDefense;
         }
+        --maxAttemps;
     }
 
 #ifdef PRINT_DEFENSE_STRATEGY

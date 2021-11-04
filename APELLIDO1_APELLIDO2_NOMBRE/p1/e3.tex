@@ -1,13 +1,21 @@
 \begin{lstlisting}
-// sustituya este codigo por su respuesta
-void placeDefenses(...) {
+bool factibilidad_centroExtraccion(int row, int col, Defense* defensa, List<Object*> obstacles, List<Defense*> defenses, 
+                  bool **freeCells,float mapHeight, float mapWidth,int nCellsWidth,
+                  int nCellsHeight) {
 
-    List<Defense*>::iterator currentDefense = defenses.begin();
-    while(currentDefense != defenses.end() && maxAttemps > 0) {
+    float cellWidth = mapWidth / nCellsWidth;
+    float cellHeight = mapHeight / nCellsHeight;
 
-        (*currentDefense)->position.x = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
-        ...
-        ++currentDefense;
+    bool is_factc = true;
+
+    Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
+
+    List<Object*>::iterator currentObstacle = obstacles.begin();
+    while (currentObstacle != obstacles.end()){
+        if((*currentObstacle)->position.subtract(cellInPosition).length()<0){
+            is_factc = false;
+        }
     }
+    return is_factc;
 }
 \end{lstlisting}
