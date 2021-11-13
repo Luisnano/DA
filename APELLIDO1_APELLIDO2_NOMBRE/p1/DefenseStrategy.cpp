@@ -91,7 +91,6 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     float cellWidth = mapWidth / nCellsWidth;
     float cellHeight = mapHeight / nCellsHeight;
     //Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
-    std::cout<<"STOP FUERA DE CONDICIONALES"<<std::endl;
 
     bool esValido = true;
     //Veamos primero si es el centro de extraccion de minerales
@@ -101,19 +100,19 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
 
     //Primero: ¿Está dentro de los limites del mapa?
     if (/*cellInPosition.x + */defensa->radio > mapWidth || /*cellInPosition.y + */defensa->radio > mapHeight){
-        std::cout<<"STOP 1"<<std::endl;
+
         esValido = false;
     }//if
 
     //El radio de el objeto no se encuentra fuera del mapa
     if (/*cellInPosition.x + */defensa->radio >mapWidth || /*cellInPosition.y */+ defensa->radio > mapHeight){
-        std::cout<<"STOP 2"<<std::endl;
+
         esValido = false;
     } 
 
     //Ya de paso vamos a mirar que no estamos intentando colocarlo en una posicion negativa
     if (/*cellInPosition.x + */defensa->radio < 0 && /*cellInPosition.y + */defensa->radio < 0){
-        std::cout<<"STOP 3"<<std::endl;
+ 
         esValido = false;
     } 
 
@@ -123,9 +122,9 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     List<Defense*> ::iterator currentDefense = defenses.begin();
     while (currentDefense != defenses.end() && esValido != false)
     {
-        std::cout<<"STOP while defenses"<<std::endl;
+  
         if((*currentDefense)->position.x == defensa->position.x && (*currentDefense)->position.y == defensa->position.y ){
-            std::cout<<"DEFENSA FALSE"<<std::endl;
+
             esValido = false;
         }//if
         ++currentDefense;
@@ -135,7 +134,7 @@ bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, L
     List<Object*> ::iterator currentObstacle = obstacles.begin();
     while (currentObstacle != obstacles.end() && esValido != false)
     {
-        std::cout<<"STOP while obstacles"<<std::endl;
+ 
         if((*currentObstacle)->position.x == defensa->position.x && (*currentObstacle)->position.y == defensa->position.y){
             esValido =  false;
         }//if
@@ -161,12 +160,12 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
         int row = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
         int col = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
 
-        std::cout<<"hola caracola"<<std::endl;
+
 
         bool es_factible = factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight, maxAttemps);
-        std::cout<<"termina factibilidad"<<std::endl;
+
         if (es_factible == true){
-            std::cout<<"HA DADO TRUE"<<std::endl;
+
             
             (*currentDefense)->position.x = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
             (*currentDefense)->position.y = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
@@ -174,7 +173,7 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
             ++currentDefense;
         }//if
         if (es_factible == false){
-            std::cout<<"HA DADO FALSE"<<std::endl;
+
             ++currentDefense;
         }
         --maxAttemps;
@@ -199,10 +198,6 @@ void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCell
 
 #endif
 }
-//--------------------------------PROBLEMA 2-----------------------------------------------------------------------
-// -------------------------------FUNCION DE FACTIBILIDAD----------------------------------------------------------
-//Para la funcion de factibilidad hay que tener en cuenta dos factores que haran si es haral una celda o no:
-//  -Que la celda este dentro del mapa.
-//  -Que la celda no este ocupada por un obstaculo o una defensa, es decir, que este libre.
+
 
 
