@@ -43,32 +43,9 @@ float defaultCellValue(int row, int col, bool** freeCells, int nCellsWidth, int 
     return val;
 }
 
-void DEF_LIB_EXPORTED placeDefenses3(bool** freeCells, int nCellsWidth, int nCellsHeight, float mapWidth, float mapHeight
-              , List<Object*> obstacles, List<Defense*> defenses) {
+//------------------------------------ALGORITMOS DE LA PRACTICA 1----------------------------
 
-    float cellWidth = mapWidth / nCellsWidth;
-    float cellHeight = mapHeight / nCellsHeight; 
-
-	cronometro c;
-    long int r = 0;
-    c.activar();
-    do {	
-		List<Defense*>::iterator currentDefense = defenses.begin();
-		while(currentDefense != defenses.end() && maxAttemps > 0) {
-
-			(*currentDefense)->position.x = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
-			(*currentDefense)->position.y = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
-			(*currentDefense)->position.z = 0; 
-			++currentDefense;
-		}
-		
-		++r;
-    } while(c.tiempo() < 1.0);
-    c.parar();
-    std::cout << (nCellsWidth * nCellsHeight) << '\t' << c.tiempo() / r << '\t' << c.tiempo()*2 / r << '\t' << c.tiempo()*3 / r << '\t' << c.tiempo()*4 / r << std::endl;
-}
-
-//------------------------------------ALGORITMO DE LA PRACTICA 1----------------------------
+//CELL VALUE CREADO EN LA PRACTICA 2
 
 float cellValue(int row, int col, bool** freeCells, int nCellsWidth, int nCellsHeight
 	, float mapWidth, float mapHeight, List<Object*> obstacles, List<Defense*> defenses, List<Map*> map) {
@@ -110,4 +87,133 @@ float cellValue(int row, int col, bool** freeCells, int nCellsWidth, int nCellsH
         ++currentDefense;
     }
 	return value; // implemente aqui la funci�n que asigna valores a las celdas
+}
+
+//FACTIBILIDAD NECESARIO PARA QUE EL PLACEDEFENSES QUE HICE EN LA 1 FUNCIONE
+
+
+bool factibilidad(int row, int col, Defense* defensa, List<Object*> obstacles, List<Defense*> defenses, 
+                  bool **freeCells,float mapHeight, float mapWidth,int nCellsWidth, int nCellsHeight, int attempts) {
+    //COMENZAMOS CON LA FUNCION DE FACTIBILIDAD
+    //De variables necesitamos lo de siempre, las celdas en forma normal y la celda actual
+
+    float cellWidth = mapWidth / nCellsWidth;
+    float cellHeight = mapHeight / nCellsHeight;
+    //Vector3 cellInPosition = cellCenterToPosition(row, col, cellWidth, cellHeight);
+
+    bool esValido = true;
+    //Veamos primero si es el centro de extraccion de minerales
+    if (attempts==1000){
+        esValido = factibilidad_centroExtraccion(row, col,defensa, obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight);
+    }
+
+    //Primero: ¿Está dentro de los limites del mapa?
+    if (/*cellInPosition.x + */defensa->radio > mapWidth || /*cellInPosition.y + */defensa->radio > mapHeight){
+
+        esValido = false;
+    }//if
+
+    //El radio de el objeto no se encuentra fuera del mapa
+    if (/*cellInPosition.x + */defensa->radio >mapWidth || /*cellInPosition.y */+ defensa->radio > mapHeight){
+
+        esValido = false;
+    } 
+
+    //Ya de paso vamos a mirar que no estamos intentando colocarlo en una posicion negativa
+    if (/*cellInPosition.x + */defensa->radio < 0 && /*cellInPosition.y + */defensa->radio < 0){
+ 
+        esValido = false;
+    } 
+
+
+    //2: Esta ocupada la celda por:
+    //2.1   -Una defensa?
+    List<Defense*> ::iterator currentDefense = defenses.begin();
+    while (currentDefense != defenses.end() && esValido != false)
+    {
+  
+        if((*currentDefense)->position.x == defensa->position.x && (*currentDefense)->position.y == defensa->position.y ){
+
+            esValido = false;
+        }//if
+        ++currentDefense;
+    }//while
+
+    //2.2   -Un obstaculo? AQUIIIIIII
+    List<Object*> ::iterator currentObstacle = obstacles.begin();
+    while (currentObstacle != obstacles.end() && esValido != false)
+    {
+ 
+        if((*currentObstacle)->position.x == defensa->position.x && (*currentObstacle)->position.y == defensa->position.y){
+            esValido =  false;
+        }//if
+        if ((defensa->radio - (*currentObstacle)->radio)<=0){
+            esValido = false;
+        } 
+        ++currentObstacle;
+    }//while
+    
+    return esValido;
+}//fin_funcion
+
+//----PLACE DEFENSES DE LA PRACTICA 1 [LLAMADAS A CELLVALUE CAMBIADAS POR DEFAULT CELL VALUE]--------------------------------
+
+void DEF_LIB_EXPORTED placeDefenses(bool** freeCells, int nCellsWidth, int nCellsHeight, float mapWidth, float mapHeight
+              , std::list<Object*> obstacles, std::list<Defense*> defenses) {
+
+    float cellWidth = mapWidth / nCellsWidth;
+    float cellHeight = mapHeight / nCellsHeight;
+
+    cronometro c;
+    long int r = 0;
+    c.activar();
+
+    do{
+
+        int maxAttemps = 1000;
+        List<Defense*>::iterator currentDefense = defenses.begin();
+        while(currentDefense != defenses.end() && maxAttemps > 0) {
+
+            int row = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
+            int col = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
+
+
+
+            bool es_factible = factibilidad(row, col,(*currentDefense), obstacles, defenses, freeCells, mapHeight, mapWidth, nCellsWidth, nCellsHeight, maxAttemps);
+
+            if (es_factible == true){
+
+            
+                (*currentDefense)->position.x = ((int)(_RAND2(nCellsWidth))) * cellWidth + cellWidth * 0.5f;
+                (*currentDefense)->position.y = ((int)(_RAND2(nCellsHeight))) * cellHeight + cellHeight * 0.5f;
+                (*currentDefense)->position.z = 0; 
+                ++currentDefense;
+            }//if
+            if (es_factible == false){
+
+                ++currentDefense;
+            }
+            --maxAttemps;
+        }
+    }while(c.tiempo() < 1.0)
+    c.parar();
+
+#ifdef PRINT_DEFENSE_STRATEGY
+
+    float** cellValues = new float* [nCellsHeight]; 
+    for(int i = 0; i < nCellsHeight; ++i) {
+       cellValues[i] = new float[nCellsWidth];
+       for(int j = 0; j < nCellsWidth; ++j) {
+           cellValues[i][j] = ((int)(cellValue(i, j))) % 256;
+       }
+    }
+    dPrintMap("strategy.ppm", nCellsHeight, nCellsWidth, cellHeight, cellWidth, freeCells
+                         , cellValues, std::list<Defense*>(), true);
+
+    for(int i = 0; i < nCellsHeight ; ++i)
+        delete [] cellValues[i];
+	delete [] cellValues;
+	cellValues = NULL;
+
+#endif
 }
